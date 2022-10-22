@@ -28,9 +28,9 @@ let internal emailRegex =
     Regex(@"^[^@]+@[^@]+$", RegexOptions.Compiled ||| RegexOptions.Singleline)
 
 let validateEmail email =
-    validation {
+    result {
         let! email = validateRequiredText "Email" 3 100 email
-        let! email = validateTextMatches "Email should have propper format" emailRegex email
+        let! email = validateTextMatches "Email should be a valid email address" emailRegex email
         return email
     }
 

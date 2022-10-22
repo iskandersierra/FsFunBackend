@@ -18,40 +18,40 @@ let validateNonEmpty name (text: string) =
     else
         Ok text
 
-let validateNonWhitespace name (text: string) =
+let validateNonBlank name (text: string) =
     if String.IsNullOrWhiteSpace text then
         Error (sprintf "%s should not be blank" name)
     else
         Ok text
 
 let validateTextMinLength name minLen (text: string) =
-    if String.length text < minLen then
+    if not (isNull text) && String.length text < minLen then
         Error (sprintf "%s should have at least %d characters" name minLen)
     else
         Ok text
 
 let validateTextMaxLength name maxLen (text: string) =
-    if String.length text > maxLen then
+    if not (isNull text) && String.length text > maxLen then
         Error (sprintf "%s should have at most %d characters" name maxLen)
     else
         Ok text
 
 let validateTextBetweenLength name minLen maxLen (text: string) =
-    if String.length text < minLen || String.length text > maxLen then
-        Error (sprintf "%s should have at between %d and %d characters" name minLen maxLen)
+    if not (isNull text) && (String.length text < minLen || String.length text > maxLen) then
+        Error (sprintf "%s should have between %d and %d characters" name minLen maxLen)
     else
         Ok text
 
 let validateTextMatches message (regex: Regex) (text: string) =
-    if not (regex.IsMatch(text)) then
+    if not (isNull text) && not (regex.IsMatch(text)) then
         Error message
     else
         Ok text
 
 let validateRequiredText name minLen maxLen (text: string) =
-    validation {
+    result {
         let! text = validateTextTrim text
-        let! text = validateNonWhitespace name text
+        let! text = validateNonBlank name text
         let! text = validateTextBetweenLength name minLen maxLen text
         return text
     }

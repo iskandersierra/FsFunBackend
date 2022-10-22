@@ -1,0 +1,18 @@
+version: '3.8'
+
+name: irisjg
+
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: 'no'
+    ports:
+      - '1433:1433'
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P4ssword
+    volumes:
+      - sql-data:/var/opt/mssql
+
+volumes:
+  sql-data:
