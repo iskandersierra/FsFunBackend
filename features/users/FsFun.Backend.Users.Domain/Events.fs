@@ -20,4 +20,4 @@ and UserEventCreated =
       lastName: string
       email: string
 
-      purgeAfter: TimeSpan }
+      purgeAt: DateTime }

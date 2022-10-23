@@ -10,6 +10,7 @@
     <Compile Include="Commands.fs" />
     <Compile Include="Validations.fs" />
     <Compile Include="Emitters.fs" />
+    <Compile Include="Projection.fs" />
   </ItemGroup>
 
   <ItemGroup>

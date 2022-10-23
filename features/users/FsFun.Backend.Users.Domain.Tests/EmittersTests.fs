@@ -5,6 +5,8 @@ open FsFun.Backend.Users.Domain.Emitters
 open Xunit
 open Swensen.Unquote
 open System
+open Foq
+open FsFun.Backend.Core.Domain
 
 [<Fact>]
 let ``emitUserCommandCreateFirst on existing state`` () =
@@ -32,11 +34,11 @@ let ``emitUserCommandCreateFirst on new state`` () =
 
     let expectedEvents =
         [ UserEventCreatedFirst
-              { displayName = "Display Name"
-                firstName = "First Name"
-                lastName = "Last Name"
-                email = "user@gmail.com"
-                subjectId = "1234abcd" } ]
+              { displayName = command.displayName
+                firstName = command.firstName
+                lastName = command.lastName
+                email = command.email
+                subjectId = command.subjectId } ]
 
     test <@ emitUserCommandCreateFirst command state = Ok expectedEvents @>
 
@@ -51,7 +53,12 @@ let ``emitUserCommandCreate on existing state`` () =
 
     let state = ExistingState
 
-    test <@ emitUserCommandCreate command state = Error "User is already created" @>
+    let now = DateTime.Parse("2020-04-13T00:00:00Z")
+
+    let clock =
+        Mock<IClock>.With (fun clock -> <@ clock.UtcNow --> now @>)
+
+    test <@ emitUserCommandCreate clock command state = Error "User is already created" @>
 
 [<Fact>]
 let ``emitUserCommandCreate on new state`` () =
@@ -64,12 +71,17 @@ let ``emitUserCommandCreate on new state`` () =
 
     let state = NewState
 
+    let now = DateTime.Parse("2020-04-13T00:00:00Z")
+
+    let clock =
+        Mock<IClock>.With (fun clock -> <@ clock.UtcNow --> now @>)
+
     let expectedEvents =
         [ UserEventCreated
-              { displayName = "Display Name"
-                firstName = "First Name"
-                lastName = "Last Name"
-                email = "user@gmail.com"
-                purgeAfter = TimeSpan.FromDays 7 } ]
+              { displayName = command.displayName
+                firstName = command.firstName
+                lastName = command.lastName
+                email = command.email
+                purgeAt = now.Add command.purgeAfter } ]
 
-    test <@ emitUserCommandCreate command state = Ok expectedEvents @>
+    test <@ emitUserCommandCreate clock command state = Ok expectedEvents @>
