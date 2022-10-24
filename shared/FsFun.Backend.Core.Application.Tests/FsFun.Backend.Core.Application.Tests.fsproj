@@ -8,9 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ValidationsTests.fs" />
-    <Compile Include="EmittersTests.fs" />
-    <Compile Include="ProjectionTests.fs" />
+    <Compile Include="IClockTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
@@ -30,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FsFun.Backend.Users.Domain\FsFun.Backend.Users.Domain.fsproj" />
+    <ProjectReference Include="..\FsFun.Backend.Core.Application\FsFun.Backend.Core.Application.fsproj" />
   </ItemGroup>
 
 </Project>

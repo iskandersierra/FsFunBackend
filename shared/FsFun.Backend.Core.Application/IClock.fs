@@ -1,4 +1,4 @@
-﻿namespace FsFun.Backend.Core.Domain
+﻿namespace FsFun.Backend.Core.Application
 
 open System
 

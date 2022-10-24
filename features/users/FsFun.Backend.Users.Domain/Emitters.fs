@@ -1,6 +1,6 @@
 ﻿module FsFun.Backend.Users.Domain.Emitters
 
-open FsFun.Backend.Core.Domain
+open System
 
 type UserCommandCreateState =
     | NewState
@@ -20,12 +20,11 @@ let emitUserCommandCreateFirst
     | ExistingState -> Error "User is already created"
 
 let emitUserCommandCreate 
-    (clock: IClock)
+    (now: DateTime)
     (command: UserCommandCreate)
     (state: UserCommandCreateState) =
     match state with
     | NewState ->
-        let now = clock.UtcNow
         Ok [ UserEventCreated
                  { displayName = command.displayName
                    firstName = command.firstName

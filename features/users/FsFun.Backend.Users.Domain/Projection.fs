@@ -11,9 +11,9 @@ type UserProjection =
       subjectId: string option
       purgeAt: DateTime option }
 
-let project (event: UserEvent) (current: UserProjection option) =
-    match current, event with
-    | None, UserEventCreatedFirst event ->
+let projectUser (event: UserEvent) (current: UserProjection option) =
+    match event, current with
+    | UserEventCreatedFirst event, None ->
         Some
             { displayName = event.displayName
               firstName = event.firstName
@@ -23,5 +23,16 @@ let project (event: UserEvent) (current: UserProjection option) =
               subjectId = Some event.subjectId
               purgeAt = None }
 
-    //| Some current, UserEventCreated event ->
-            
+    | UserEventCreatedFirst _, Some p -> Some p
+
+    | UserEventCreated event, None ->
+        Some
+            { displayName = event.displayName
+              firstName = event.firstName
+              lastName = event.lastName
+              email = event.email
+
+              subjectId = None
+              purgeAt = event.purgeAt |> Some }
+
+    | UserEventCreated _, Some p -> Some p

@@ -5,7 +5,6 @@ open FsFun.Backend.Users.Domain.Emitters
 open Xunit
 open Swensen.Unquote
 open System
-open Foq
 open FsFun.Backend.Core.Domain
 
 [<Fact>]
@@ -55,10 +54,7 @@ let ``emitUserCommandCreate on existing state`` () =
 
     let now = DateTime.Parse("2020-04-13T00:00:00Z")
 
-    let clock =
-        Mock<IClock>.With (fun clock -> <@ clock.UtcNow --> now @>)
-
-    test <@ emitUserCommandCreate clock command state = Error "User is already created" @>
+    test <@ emitUserCommandCreate now command state = Error "User is already created" @>
 
 [<Fact>]
 let ``emitUserCommandCreate on new state`` () =
@@ -73,9 +69,6 @@ let ``emitUserCommandCreate on new state`` () =
 
     let now = DateTime.Parse("2020-04-13T00:00:00Z")
 
-    let clock =
-        Mock<IClock>.With (fun clock -> <@ clock.UtcNow --> now @>)
-
     let expectedEvents =
         [ UserEventCreated
               { displayName = command.displayName
@@ -84,4 +77,4 @@ let ``emitUserCommandCreate on new state`` () =
                 email = command.email
                 purgeAt = now.Add command.purgeAfter } ]
 
-    test <@ emitUserCommandCreate clock command state = Ok expectedEvents @>
+    test <@ emitUserCommandCreate now command state = Ok expectedEvents @>

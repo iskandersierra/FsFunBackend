@@ -6,11 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Validations.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="FsToolkit.ErrorHandling" Version="3.1.0" />
+    <Compile Include="IClock.fs" />
   </ItemGroup>
 
 </Project>
