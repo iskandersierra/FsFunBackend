@@ -11,40 +11,48 @@ open FsCheck.Xunit
 
 [<Property>]
 let ``projectUser event UserEventCreatedFirst on new User``
-    (event: UserEventCreatedFirst) =
+    (envelope: EventEnvelope<UserEventCreatedFirst>) =
     let expected: UserProjection = {
-        displayName = event.displayName
-        firstName = event.firstName
-        lastName = event.lastName
-        email = event.email
-        subjectId = Some event.subjectId
+        displayName = envelope.event.displayName
+        firstName = envelope.event.firstName
+        lastName = envelope.event.lastName
+        email = envelope.event.email
+        subjectId = Some envelope.event.subjectId
         purgeAt = None
+        createdAt = envelope.timestamp
+        modifiedAt = envelope.timestamp
     }
 
-    test <@ projectUser (UserEventCreatedFirst event) None = Some expected @>
+    let actualEnvelope = envelope |> EventEnvelope.map UserEventCreatedFirst
+
+    test <@ projectUser actualEnvelope None = Some expected @>
 
 [<Property>]
 let ``projectUser event UserEventCreatedFirst on existing User``
-    (event: UserEventCreatedFirst)
+    (envelope: EventEnvelope<UserEventCreatedFirst>)
     (current: UserProjection) =
-    test <@ projectUser (UserEventCreatedFirst event) (Some current) = Some current @>
+    let actualEnvelope = envelope |> EventEnvelope.map UserEventCreatedFirst
+    test <@ projectUser actualEnvelope (Some current) = Some current @>
 
 [<Property>]
 let ``projectUser event UserEventCreated on new User``
-    (event: UserEventCreated) =
+    (envelope: EventEnvelope<UserEventCreated>) =
     let expected: UserProjection = {
-        displayName = event.displayName
-        firstName = event.firstName
-        lastName = event.lastName
-        email = event.email
+        displayName = envelope.event.displayName
+        firstName = envelope.event.firstName
+        lastName = envelope.event.lastName
+        email = envelope.event.email
         subjectId = None
-        purgeAt = Some event.purgeAt
+        purgeAt = Some envelope.event.purgeAt
+        createdAt = envelope.timestamp
+        modifiedAt = envelope.timestamp
     }
-
-    test <@ projectUser (UserEventCreated event) None = Some expected @>
+    let actualEnvelope = envelope |> EventEnvelope.map UserEventCreated
+    test <@ projectUser actualEnvelope None = Some expected @>
 
 [<Property>]
 let ``projectUser event UserEventCreated on existing User``
-    (event: UserEventCreated)
+    (envelope: EventEnvelope<UserEventCreated>)
     (current: UserProjection) =
-    test <@ projectUser (UserEventCreated event) (Some current) = Some current @>
+    let actualEnvelope = envelope |> EventEnvelope.map UserEventCreated
+    test <@ projectUser actualEnvelope (Some current) = Some current @>

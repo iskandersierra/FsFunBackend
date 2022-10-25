@@ -1,6 +1,7 @@
 ﻿module FsFun.Backend.Users.Domain.Projection
 
 open System
+open FsFun.Backend.Core.Domain
 
 type UserProjection =
     { displayName: string
@@ -9,10 +10,13 @@ type UserProjection =
       email: string
 
       subjectId: string option
-      purgeAt: DateTime option }
+      purgeAt: DateTime option
+      
+      createdAt: DateTime
+      modifiedAt: DateTime }
 
-let projectUser (event: UserEvent) (current: UserProjection option) =
-    match event, current with
+let projectUser (envelope: EventEnvelope<UserEvent>) (current: UserProjection option) =
+    match envelope.event, current with
     | UserEventCreatedFirst event, None ->
         Some
             { displayName = event.displayName
@@ -21,7 +25,10 @@ let projectUser (event: UserEvent) (current: UserProjection option) =
               email = event.email
 
               subjectId = Some event.subjectId
-              purgeAt = None }
+              purgeAt = None
+              
+              createdAt = envelope.timestamp
+              modifiedAt = envelope.timestamp }
 
     | UserEventCreatedFirst _, Some p -> Some p
 
@@ -33,6 +40,9 @@ let projectUser (event: UserEvent) (current: UserProjection option) =
               email = event.email
 
               subjectId = None
-              purgeAt = event.purgeAt |> Some }
+              purgeAt = event.purgeAt |> Some
+              
+              createdAt = envelope.timestamp
+              modifiedAt = envelope.timestamp }
 
     | UserEventCreated _, Some p -> Some p

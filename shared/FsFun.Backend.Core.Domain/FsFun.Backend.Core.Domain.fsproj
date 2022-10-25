@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Envelope.fs" />
     <Compile Include="Validations.fs" />
   </ItemGroup>
 
